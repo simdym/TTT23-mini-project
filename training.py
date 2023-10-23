@@ -12,7 +12,7 @@ def train_epoch(model: nn.Module, dataloader: DataLoader, loss: _Loss, optimizer
 
     for image_batch in dataloader:
     
-        out, latent = model(image_batch)
+        out, _ = model(image_batch)
         loss = loss(out, image_batch)
 
         optimizer.zero_grad()
@@ -32,7 +32,7 @@ def validate(model: nn.Module, dataloader: DataLoader, loss: _Loss, optimizer: O
 
     with torch.no_grad():
         for image_batch in dataloader:
-            out, latent = model(image_batch)
+            out, _ = model(image_batch)
             loss = loss(out, image_batch)
 
             optimizer.zero_grad()
