@@ -10,6 +10,8 @@ def train_epoch(model: nn.Module, dataloader: DataLoader, loss: _Loss, optimizer
     loss_sum = 0
     batches = 0
 
+    model.train()
+
     for image_batch in dataloader:
         image_batch = image_batch.to(device)
     
@@ -30,6 +32,8 @@ def train_epoch(model: nn.Module, dataloader: DataLoader, loss: _Loss, optimizer
 def validate(model: nn.Module, dataloader: DataLoader, loss: _Loss, optimizer: Optimizer, device: torch.device):
     loss_sum = 0
     batches = 0
+
+    model.eval()
 
     with torch.no_grad():
         for image_batch in dataloader:
