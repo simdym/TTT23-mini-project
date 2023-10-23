@@ -29,7 +29,7 @@ def train_epoch(model: nn.Module, dataloader: DataLoader, loss: _Loss, optimizer
     return loss_sum / batches
 
 
-def validate(model: nn.Module, dataloader: DataLoader, loss: _Loss, optimizer: Optimizer, device: torch.device):
+def validate(model: nn.Module, dataloader: DataLoader, loss: _Loss, device: torch.device):
     loss_sum = 0
     batches = 0
 
@@ -42,9 +42,6 @@ def validate(model: nn.Module, dataloader: DataLoader, loss: _Loss, optimizer: O
             out, _ = model(image_batch)
             loss = loss(out, image_batch)
 
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
             loss_sum += loss.item()
             batches += 1
     
