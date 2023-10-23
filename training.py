@@ -40,7 +40,5 @@ def validate(model: nn.Module, dataloader: DataLoader, loss: _Loss, optimizer: O
             optimizer.step()
             loss_sum += loss.item()
             batches += 1
-
-            print(f"Loss: {loss.item()}")
     
     return loss_sum / batches
