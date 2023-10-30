@@ -74,7 +74,6 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
 
         self.fc_layers = nn.ModuleList()
-
         for i in range(len(fc_layers) - 1):
             fc_layer = nn.Linear(fc_layers[i], fc_layers[i+1])
             self.fc_layers.append(fc_layer)
@@ -86,6 +85,18 @@ class Decoder(nn.Module):
             x = nn.functional.dropout(x, p=0.2)
         
         x = x.view(-1, 3, 320, 184)
+
+        return x
+
+
+class ResnetEncoder(nn.Module):
+    def __init__(self, output_dim: int):
+        super(ResnetEncoder, self).__init__()
+        self.resnet = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=True)
+        self.resnet.fc = nn.Linear(512, output_dim)
+    
+    def forward(self, x):
+        x = self.resnet(x)
 
         return x
 
