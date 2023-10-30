@@ -70,8 +70,13 @@ class Encoder(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, fc_layers: List[int]):
+    def __init__(self, fc_layers: List[int], output_dim: List[int] = [3, 224, 224]):
         super(Decoder, self).__init__()
+
+        if len(output_dim) != 3:
+            raise ValueError("output_dim must be a list of length 3")
+
+        self.output_dim = output_dim
 
         self.fc_layers = nn.ModuleList()
         for i in range(len(fc_layers) - 1):
@@ -84,7 +89,7 @@ class Decoder(nn.Module):
             x = nn.functional.relu(x)
             x = nn.functional.dropout(x, p=0.2)
         
-        x = x.view(-1, 3, 320, 184)
+        x = x.view(-1, self.output_dim[0], self.output_dim[1], self.output_dim[2])
 
         return x
 
@@ -113,3 +118,5 @@ class AutoEncoder(nn.Module):
         out = self.decoder(latent)
 
         return out, latent
+    
+decoder = Decoder([128, 256])
