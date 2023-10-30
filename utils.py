@@ -7,7 +7,7 @@ def unnormalize(tensor, mean, std):
     
     return T.functional.normalize(tensor, -mean/std, 1/std)
 
-class Unnormalize(callable):
+class Unnormalize():
     def __init__(self, mean, std):
         self.mean = torch.Tensor(mean)
         self.std = torch.Tensor(std)
