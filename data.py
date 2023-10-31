@@ -9,9 +9,10 @@ from typing import List, Callable, Any
 
 
 class RatDataset(Dataset):
-    def __init__(self, file_path: str, transform: Callable = None):
+    def __init__(self, file_path: str, preprocess: Callable = None, augmentation: Callable = None):
         self.file_path = file_path
-        self.transform = transform
+        self.preprocess = preprocess
+        self.augmentation = augmentation
 
         self.data = []
 
@@ -22,12 +23,18 @@ class RatDataset(Dataset):
     def __len__(self):
         return len(self.data)
 
-    def __getitem__(self, idx) -> Any:
+    def __getitem__(self, idx) -> tuple[torch.Tensor, torch.Tensor]:
         image = self.data[idx]
 
-        if self.transform:
-            transformed_image = self.transform(image)
+        if self.preprocess:
+            preprocessed_image = self.preprocess(image)
         else:
-            transformed_image = image
+            preprocessed_image = image
+        
+        if self.augmentation:
+            augmented_image = self.augmentation(image)
+        else:
+            augmented_image = image
 
-        return image, transformed_image
+
+        return preprocessed_image, augmented_image
