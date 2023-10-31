@@ -32,9 +32,9 @@ class RatDataset(Dataset):
             preprocessed_image = image
         
         if self.augmentation:
-            augmented_image = self.augmentation(image)
+            augmented_image = self.augmentation(preprocessed_image)
         else:
-            augmented_image = image
+            augmented_image = preprocessed_image
 
 
         return preprocessed_image, augmented_image
