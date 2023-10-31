@@ -12,10 +12,13 @@ def train_epoch(model: nn.Module, dataloader: DataLoader, loss_fn: _Loss, optimi
 
     model.train()
 
-    for image_batch in dataloader:
+    for image_batch, transformed_image_batch in dataloader:
         image_batch = image_batch.to(device)
-    
-        out, _ = model(image_batch)
+        transformed_image_batch = transformed_image_batch.to(device)
+
+        # Use augmented images as input to the model
+        out, _ = model(transformed_image_batch)
+        # but original images as targets
         loss = loss_fn(out, image_batch)
 
         optimizer.zero_grad()
@@ -36,10 +39,13 @@ def validate(model: nn.Module, dataloader: DataLoader, loss_fn: _Loss, device: t
     model.eval()
 
     with torch.no_grad():
-        for image_batch in dataloader:
+        for image_batch, transformed_image_batch in dataloader:
             image_batch = image_batch.to(device)
+            transformed_image_batch = transformed_image_batch.to(device)
 
-            out, _ = model(image_batch)
+            # Use augmented images as input to the model
+            out, _ = model(transformed_image_batch)
+            # but original images as targets
             loss = loss_fn(out, image_batch)
 
             loss_sum += loss.item()

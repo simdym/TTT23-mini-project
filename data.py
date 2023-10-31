@@ -26,6 +26,8 @@ class RatDataset(Dataset):
         image = self.data[idx]
 
         if self.transform:
-            image = self.transform(image)
+            transformed_image = self.transform(image)
+        else:
+            transformed_image = image
 
-        return image
+        return image, transformed_image

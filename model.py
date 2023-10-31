@@ -118,5 +118,3 @@ class AutoEncoder(nn.Module):
         out = self.decoder(latent)
 
         return out, latent
-    
-decoder = Decoder([128, 256])
