@@ -95,11 +95,41 @@ class Decoder(nn.Module):
 
 
 class ResnetEncoder(nn.Module):
-    def __init__(self, output_dim: int):
+    def __init__(self, output_dim: int, hidden_dims: List[int] = None):
         super(ResnetEncoder, self).__init__()
         self.resnet = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=True)
-        self.resnet.fc = nn.Linear(512, output_dim)
-    
+
+        if hidden_dims == None:
+            # If no hidden dims are specified, use no hidden layers
+            self.resnet.fc = nn.Linear(512, output_dim)
+        elif len(hidden_dims) == 1:
+            # If only one hidden dim is specified, use one hidden layer
+            self.resnet.fc = nn.Sequential(
+                nn.Linear(512, hidden_dims[0]),
+                nn.ReLU(),
+                nn.Dropout(p=0.2),
+                nn.Linear(hidden_dims[0], output_dim)
+            )
+        else:
+            # If more than one hidden dim is specified, use multiple hidden layers
+
+            # First layer
+            self.resnet.fc = nn.Sequential(
+                nn.Linear(512, hidden_dims[0]),
+                nn.ReLU(),
+                nn.Dropout(p=0.2)
+            )
+
+            # Middle layers
+            for i in range(len(hidden_dims) - 1):
+                self.resnet.fc.append(nn.Linear(hidden_dims[i], hidden_dims[i+1]))
+                self.resnet.fc.append(nn.ReLU())
+                self.resnet.fc.append(nn.Dropout(p=0.2))
+            
+            # Output layer
+            self.resnet.fc.append(nn.Linear(hidden_dims[-1], output_dim))
+
+
     def forward(self, x):
         x = self.resnet(x)
 
@@ -118,3 +148,9 @@ class AutoEncoder(nn.Module):
         out = self.decoder(latent)
 
         return out, latent
+
+
+
+resnetencoder = ResnetEncoder(1000, [512, 256, 128, 64, 32, 16, 8, 4, 2])
+
+print(resnetencoder)
