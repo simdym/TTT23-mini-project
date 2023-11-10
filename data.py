@@ -38,3 +38,17 @@ class RatDataset(Dataset):
 
 
         return preprocessed_image, augmented_image
+
+class RatDatasetWithFilename(Dataset):
+    def __init__(self, file_path: str, preprocess: Callable = None, augmentation: Callable = None):
+        self.file_path = file_path
+        self.preprocess = preprocess
+        self.files = os.listdir(file_path)
+
+    def __len__(self):
+        return len(self.files)
+    
+    def __getitem__(self, idx) -> Any:
+        image = Image.open(os.path.join(self.file_path, self.files[idx])).convert('RGB')
+
+        return self.files[idx], self.preprocess(image)
